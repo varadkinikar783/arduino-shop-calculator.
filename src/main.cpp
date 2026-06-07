@@ -12,7 +12,7 @@ uint8_t bootC = 45; //Used to check boot status.
 
 void saveCalculation(double n1, char op, double n2, double res);
 void overflowcontrol(int count);
-void printistory();
+void printhistory();
 void clearhistory();
 void wipehistory();
 
