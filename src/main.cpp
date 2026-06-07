@@ -2,6 +2,12 @@
 #include<math.h>
 #include<EEPROM.h>
 
+struct Calculation {
+  float n1;    // 4 bytes on Arduino Uno
+  char op;     // 1 byte
+  float n2;    // 4 bytes
+  float res;   // 4 bytes
+};             // Total size = 13 bytes
 double num1;
 double num2;
 char sign;
@@ -142,19 +148,22 @@ void overflowcontrol(int count){
     printhistory();
     Serial.print("Clearing in 10 secs.");
     delay(10000);
-    wipehistory();
+    clearhistory();
   }
 }
 
 void saveCalculation(double n1, char op, double n2, double res){
-  uint8_t count = EEPROM.read(1);  // how many entries exist
-  int startAddress = 2 + (count * 25);
-  EEPROM.put(startAddress, n1);
-  EEPROM.put(startAddress + 8, op);
-  EEPROM.put(startAddress + 9, n2);
-  EEPROM.put(startAddress + 17, res);
-  count++;
-  EEPROM.write(1, count);
+   uint8_t count = EEPROM.read(1);  
+    int startAddress = 2 + (count * sizeof(Calculation));
+    
+    // Package into the struct layout
+    Calculation calc = {(float)n1, op, (float)n2, (float)res};
+    
+    // Save the entire block cleanly
+    EEPROM.put(startAddress, calc);
+    
+    count++;
+    EEPROM.write(1, count);
   
 }
 
@@ -186,8 +195,8 @@ void clearhistory(){
   EEPROM.write(1, 0);
 }
 
-void wipehistory(){
-  for (int i = 0; i < EEPROM.length(); i++) {
+/*void wipehistory(){
+  for (uint16_t i = 0; i < EEPROM.length(); i++) {
     EEPROM.write(i, 0);
   }
-}
+}*/
