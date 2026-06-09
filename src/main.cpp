@@ -168,25 +168,21 @@ void saveCalculation(double n1, char op, double n2, double res){
 }
 
 void printhistory(){
-  uint8_t count = EEPROM.read(1);
+   uint8_t count = EEPROM.read(1);
   for(int i = 0; i < count; i++){
-    int startAddress = 2 + (i * 25);
-    double n1, n2, res;
-    char op;
-    EEPROM.get(startAddress, n1);
-    EEPROM.get(startAddress + 8, op);
-    EEPROM.get(startAddress + 9, n2);
-    EEPROM.get(startAddress + 17, res);
+    int startAddress = 2 + (i * sizeof(Calculation));
+    Calculation calc;
+    EEPROM.get(startAddress, calc);
     Serial.print("entry No.: ");
     Serial.print(i + 1);
-    Serial.println("->");
-    Serial.print(n1);
+    Serial.println(" ->");
+    Serial.print(calc.n1);
     Serial.print(" ");
-    Serial.print(op);
+    Serial.print(calc.op);
     Serial.print(" ");
-    Serial.print(n2);
+    Serial.print(calc.n2);
     Serial.print(" = ");
-    Serial.println(res);
+    Serial.println(calc.res);
     Serial.println();
   }
 }
